@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ステレオグラム・クリエイター | 3D画像作成ツール</title>
+    <!-- Google Fonts の読み込み -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Outfit:wght@400;600;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- ヘッダーエリア -->
+        <header>
+            <div class="logo">
+                <span class="logo-icon">✨</span>
+                <h1>ステレオグラム・クリエイター</h1>
+            </div>
+            <p class="subtitle">寄り目をすると、絵や文字が浮かび上がる不思議な3D画像を作ろう！</p>
+        </header>
+
+        <!-- メインコンテンツ -->
+        <main class="main-content">
+            <!-- 左カラム：設定と操作 -->
+            <section class="control-panel card">
+                <h2><span class="step-num">1</span> 立体のもと（浮き出る形）を作る</h2>
+                
+                <!-- モード切り替えタブ -->
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="text-tab">💬 文字を入力</button>
+                    <button class="tab-btn" data-tab="shape-tab">⭐️ 図形を置く</button>
+                    <button class="tab-btn" data-tab="upload-tab">📁 画像を読み込む</button>
+                </div>
+
+                <!-- タブコンテンツ：文字入力 -->
+                <div id="text-tab" class="tab-content active">
+                    <div class="input-group">
+                        <label for="text-input">表示する文字</label>
+                        <input type="text" id="text-input" value="LOVE" placeholder="文字を入力してください">
+                    </div>
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="font-size">文字の大きさ</label>
+                            <input type="range" id="font-size" min="40" max="150" value="80">
+                            <span class="range-val" id="font-size-val">80px</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- タブコンテンツ：図形選択 -->
+                <div id="shape-tab" class="tab-content">
+                    <label>図形を選択</label>
+                    <div class="shape-selector">
+                        <button class="shape-btn active" data-shape="star">★ 星</button>
+                        <button class="shape-btn" data-shape="heart">♥ ハート</button>
+                        <button class="shape-btn" data-shape="circle">● 丸</button>
+                        <button class="shape-btn" data-shape="ring">◎ 二重丸</button>
+                        <button class="shape-btn" data-shape="square">■ 四角</button>
+                    </div>
+                    <div class="input-group">
+                        <label for="shape-size">図形の大きさ</label>
+                        <input type="range" id="shape-size" min="40" max="200" value="100">
+                        <span class="range-val" id="shape-size-val">100px</span>
+                    </div>
+                </div>
+
+                <!-- タブコンテンツ：画像アップロード -->
+                <div id="upload-tab" class="tab-content">
+                    <div class="upload-area">
+                        <input type="file" id="depth-upload" accept="image/*" class="file-input">
+                        <label for="depth-upload" class="upload-label">
+                            <span class="upload-icon">📥</span>
+                            <span class="upload-text">白黒の画像をここにドラッグ＆ドロップ<br>またはクリックして選択</span>
+                        </label>
+                    </div>
+                    <p class="help-text">※ 白い部分が手前に浮き出し、黒い部分が奥に引っ込んで見えます。</p>
+                </div>
+
+                <!-- 立体プレビューエリア（編集用キャンバス） -->
+                <div class="preview-box">
+                    <div class="preview-header">
+                        <span>立体のもとプレビュー (ドラッグで動かせます)</span>
+                        <button id="clear-btn" class="text-btn">クリア</button>
+                    </div>
+                    <div class="canvas-wrapper">
+                        <canvas id="depth-canvas" width="600" height="400"></canvas>
+                    </div>
+                </div>
+
+                <hr class="divider">
+
+                <h2><span class="step-num">2</span> 背景の模様（パターン）を選ぶ</h2>
+                <div class="pattern-selector">
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="pattern-type" value="dots-bw" checked>
+                            <span class="radio-custom"></span>
+                            砂嵐（白黒ドット）
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="pattern-type" value="dots-color">
+                            <span class="radio-custom"></span>
+                            砂嵐（カラフル）
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="pattern-type" value="image">
+                            <span class="radio-custom"></span>
+                            好きな画像を背景にする
+                        </label>
+                    </div>
+
+                    <!-- 背景画像アップロード（非表示、画像選択時のみ表示） -->
+                    <div id="pattern-upload-container" class="upload-area style-small hidden">
+                        <input type="file" id="pattern-upload" accept="image/*" class="file-input">
+                        <label for="pattern-upload" class="upload-label">
+                            <span>📥 背景画像を読み込む</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 隠しキャンバス（背景パターン用） -->
+                <canvas id="pattern-canvas" width="200" height="200" style="display: none;"></canvas>
+
+                <div class="action-buttons">
+                    <button id="generate-btn" class="primary-btn">
+                        <span class="btn-icon">⚡️</span> 3D画像を作成する
+                    </button>
+                </div>
+            </section>
+
+            <!-- 右カラム：出来上がったステレオグラム -->
+            <section class="result-panel card">
+                <div class="result-header">
+                    <h2><span class="step-num">3</span> 完成した立体画像</h2>
+                    <button id="save-btn" class="secondary-btn" disabled>
+                        <span>💾 画像を保存する</span>
+                    </button>
+                </div>
+
+                <div class="result-canvas-wrapper">
+                    <canvas id="stereogram-canvas" width="600" height="400"></canvas>
+                    <div id="instructions" class="instructions-overlay">
+                        <p class="placeholder-text">「3D画像を作成する」ボタンを押すとここに表示されます</p>
+                    </div>
+                </div>
+
+                <!-- 寄り目のやり方のヒント -->
+                <div class="viewing-guide">
+                    <h3>💡 寄り目（立体視）のコツ</h3>
+                    <div class="dots-guide">
+                        <div class="guide-dot left-dot"></div>
+                        <div class="guide-dot right-dot"></div>
+                    </div>
+                    <p class="guide-intro">上の2つの青い点が「3つ」に見えるように、画面の奥をぼーっと見るか、寄り目をしてみてください。3つに見えたときにピントを合わせると、立体画像が浮き上がって見えます！</p>
+                    <ul>
+                        <li><strong>平行法（奥を見る）</strong>：画面の奥の方（例えば壁）を見るように視線を並行にします。画像が自然に奥に引っ込んだり浮き出たりします。</li>
+                        <li><strong>交差法（寄り目にする）</strong>：画面と目の間（指先など）を見つめて寄り目にします。※交差法で見ると、手前と奥が逆（彫刻のようにへこんで）見えることがあります。</li>
+                    </ul>
+                </div>
+            </section>
+        </main>
+
+        <!-- フッター -->
+        <footer>
+            <p>&copy; やまやま-ysnr</p>
+        </footer>
+    </div>
+
+    <!-- JavaScript ファイルの読み込み -->
+    <script src="app.js?v=3" defer></script>
+</body>
+</html>
